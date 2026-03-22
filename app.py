@@ -19,24 +19,37 @@ st.markdown("""
     .stApp {
         background-color: #F0F4F8;
     }
+    .main .block-container {
+        background-color: #F0F4F8;
+        padding: 2rem;
+    }
+    p, h1, h2, h3, label, div {
+        color: #1F4E79 !important;
+    }
+    .prediction-complete p,
+    .prediction-strong p,
+    .prediction-weak p,
+    .prediction-negligible p {
+        color: white !important;
+    }
     .main-header {
         font-size: 2.8rem;
         font-weight: 800;
-        color: #1F4E79;
+        color: #1F4E79 !important;
         text-align: center;
         padding: 25px 0 5px 0;
         letter-spacing: 1px;
     }
     .sub-header {
         font-size: 1.1rem;
-        color: #5B8DB8;
+        color: #5B8DB8 !important;
         text-align: center;
         margin-bottom: 10px;
         font-style: italic;
     }
     .prediction-complete {
         background: linear-gradient(135deg, #1a7a4a, #2ECC71);
-        color: white;
+        color: white !important;
         padding: 25px;
         border-radius: 15px;
         text-align: center;
@@ -46,7 +59,7 @@ st.markdown("""
     }
     .prediction-strong {
         background: linear-gradient(135deg, #b8860b, #F4D03F);
-        color: white;
+        color: white !important;
         padding: 25px;
         border-radius: 15px;
         text-align: center;
@@ -56,7 +69,7 @@ st.markdown("""
     }
     .prediction-weak {
         background: linear-gradient(135deg, #c0392b, #E74C3C);
-        color: white;
+        color: white !important;
         padding: 25px;
         border-radius: 15px;
         text-align: center;
@@ -66,7 +79,7 @@ st.markdown("""
     }
     .prediction-negligible {
         background: linear-gradient(135deg, #6c3483, #9B59B6);
-        color: white;
+        color: white !important;
         padding: 25px;
         border-radius: 15px;
         text-align: center;
@@ -83,7 +96,7 @@ st.markdown("""
     }
     .stButton > button {
         background: linear-gradient(135deg, #1F4E79, #2E75B6);
-        color: white;
+        color: white !important;
         border: none;
         border-radius: 10px;
         font-size: 1.1rem;
@@ -94,9 +107,6 @@ st.markdown("""
     .stButton > button:hover {
         background: linear-gradient(135deg, #2E75B6, #1F4E79);
         box-shadow: 0 4px 15px rgba(31,78,121,0.4);
-    }
-    h2, h3 {
-        color: #1F4E79;
     }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -178,13 +188,13 @@ if page == "Home":
         st.metric(
             "Classification Accuracy",
             "83.33%",
-            f"KNN Model"
+            "KNN Model"
         )
     with col4:
         st.metric(
             "Regression R2",
             "0.48",
-            f"RFR Model"
+            "RFR Model"
         )
 
     st.divider()
