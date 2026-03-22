@@ -16,33 +16,86 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .stApp {
-        background-color: #F0F4F8;
+    /* ==============================
+       LIGHT MODE
+    ============================== */
+    @media (prefers-color-scheme: light) {
+        .stApp {
+            background-color: #F0F4F8;
+        }
+        .main .block-container {
+            background-color: #F0F4F8;
+        }
+        .main-header {
+            color: #1F4E79 !important;
+        }
+        .sub-header {
+            color: #5B8DB8 !important;
+        }
+        h1, h2, h3, h4, p, label {
+            color: #1F4E79 !important;
+        }
+        .sidebar-ref-box {
+            background-color: #FFFFFF;
+            border: 1px solid #2E75B6;
+            border-radius: 10px;
+            padding: 15px;
+            color: #1F4E79 !important;
+        }
+        .sidebar-ref-box p,
+        .sidebar-ref-box a {
+            color: #1F4E79 !important;
+        }
     }
-    .main .block-container {
-        background-color: #F0F4F8;
-        padding: 2rem;
+
+    /* ==============================
+       DARK MODE
+    ============================== */
+    @media (prefers-color-scheme: dark) {
+        .stApp {
+            background-color: #0E1117;
+        }
+        .main .block-container {
+            background-color: #0E1117;
+        }
+        .main-header {
+            color: #63B3ED !important;
+        }
+        .sub-header {
+            color: #90CDF4 !important;
+        }
+        h1, h2, h3, h4, p, label {
+            color: #E2E8F0 !important;
+        }
+        .sidebar-ref-box {
+            background-color: #1A202C;
+            border: 1px solid #63B3ED;
+            border-radius: 10px;
+            padding: 15px;
+            color: #E2E8F0 !important;
+        }
+        .sidebar-ref-box p,
+        .sidebar-ref-box a {
+            color: #90CDF4 !important;
+        }
+        div[data-testid="metric-container"] {
+            background-color: #1A202C !important;
+            border-left: 4px solid #63B3ED !important;
+        }
     }
-    p, h1, h2, h3, label, div {
-        color: #1F4E79 !important;
-    }
-    .prediction-complete p,
-    .prediction-strong p,
-    .prediction-weak p,
-    .prediction-negligible p {
-        color: white !important;
-    }
+
+    /* ==============================
+       SHARED STYLES (both modes)
+    ============================== */
     .main-header {
         font-size: 2.8rem;
         font-weight: 800;
-        color: #1F4E79 !important;
         text-align: center;
         padding: 25px 0 5px 0;
         letter-spacing: 1px;
     }
     .sub-header {
         font-size: 1.1rem;
-        color: #5B8DB8 !important;
         text-align: center;
         margin-bottom: 10px;
         font-style: italic;
@@ -55,7 +108,8 @@ st.markdown("""
         text-align: center;
         font-size: 1.6rem;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(46,204,113,0.3);
+        box-shadow: 0 4px 15px rgba(46,204,113,0.4);
+        margin: 10px 0;
     }
     .prediction-strong {
         background: linear-gradient(135deg, #b8860b, #F4D03F);
@@ -65,7 +119,8 @@ st.markdown("""
         text-align: center;
         font-size: 1.6rem;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(244,208,63,0.3);
+        box-shadow: 0 4px 15px rgba(244,208,63,0.4);
+        margin: 10px 0;
     }
     .prediction-weak {
         background: linear-gradient(135deg, #c0392b, #E74C3C);
@@ -75,7 +130,8 @@ st.markdown("""
         text-align: center;
         font-size: 1.6rem;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+        box-shadow: 0 4px 15px rgba(231,76,60,0.4);
+        margin: 10px 0;
     }
     .prediction-negligible {
         background: linear-gradient(135deg, #6c3483, #9B59B6);
@@ -85,14 +141,14 @@ st.markdown("""
         text-align: center;
         font-size: 1.6rem;
         font-weight: bold;
-        box-shadow: 0 4px 15px rgba(155,89,182,0.3);
+        box-shadow: 0 4px 15px rgba(155,89,182,0.4);
+        margin: 10px 0;
     }
     div[data-testid="metric-container"] {
-        background: white;
         border-radius: 12px;
         padding: 15px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border-left: 4px solid #1F4E79;
+        border-left: 4px solid #2E75B6;
     }
     .stButton > button {
         background: linear-gradient(135deg, #1F4E79, #2E75B6);
@@ -103,10 +159,12 @@ st.markdown("""
         font-weight: bold;
         padding: 15px;
         transition: all 0.3s;
+        width: 100%;
     }
     .stButton > button:hover {
         background: linear-gradient(135deg, #2E75B6, #1F4E79);
         box-shadow: 0 4px 15px rgba(31,78,121,0.4);
+        transform: translateY(-2px);
     }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -159,12 +217,14 @@ page = st.sidebar.radio(
 )
 st.sidebar.divider()
 st.sidebar.markdown("### Reference Study")
-st.sidebar.info(
-    "This work extends:\n\n"
-    "**Ozdemir et al. (2023)**\n\n"
-    "Machine Learning: Science and Technology, 4, 015030\n\n"
-    "DOI: 10.1088/2632-2153/acc1c0"
-)
+st.sidebar.markdown("""
+<div class="sidebar-ref-box">
+    <p><strong>This work extends:</strong></p>
+    <p><strong>Ozdemir et al. (2023)</strong></p>
+    <p>Machine Learning: Science and Technology, 4, 015030</p>
+    <p>DOI: 10.1088/2632-2153/acc1c0</p>
+</div>
+""", unsafe_allow_html=True)
 
 # ============================================
 # PAGE 1: Home
@@ -174,26 +234,22 @@ if page == "Home":
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric(
-            "Research Articles",
-            "45",
+            "Research Articles", "45",
             f"Extended from {REFERENCE}"
         )
     with col2:
         st.metric(
-            "Observations",
-            "146",
+            "Observations", "146",
             f"Dataset: {REFERENCE}"
         )
     with col3:
         st.metric(
-            "Classification Accuracy",
-            "83.33%",
+            "Classification Accuracy", "83.33%",
             "KNN Model"
         )
     with col4:
         st.metric(
-            "Regression R2",
-            "0.48",
+            "Regression R2", "0.48",
             "RFR Model"
         )
 
@@ -235,7 +291,8 @@ if page == "Home":
     with col2:
         st.subheader("Microbial Inactivation Scale")
         categories = {
-            'Category': ['Complete', 'Strong', 'Weak', 'Negligible'],
+            'Category': ['Complete', 'Strong',
+                         'Weak', 'Negligible'],
             'MI Range': [
                 'MI >= 6.0 log',
                 'MI 3.0 - 5.99 log',
@@ -389,29 +446,37 @@ elif page == "Predict":
             if category == 'Complete':
                 st.markdown(
                     '<div class="prediction-complete">'
-                    'COMPLETE<br>Full Bacterial Inactivation'
-                    '</div>',
+                    'COMPLETE<br>'
+                    '<span style="font-size:1rem">'
+                    'Full Bacterial Inactivation'
+                    '</span></div>',
                     unsafe_allow_html=True
                 )
             elif category == 'Strong':
                 st.markdown(
                     '<div class="prediction-strong">'
-                    'STRONG<br>High Bacterial Inactivation'
-                    '</div>',
+                    'STRONG<br>'
+                    '<span style="font-size:1rem">'
+                    'High Bacterial Inactivation'
+                    '</span></div>',
                     unsafe_allow_html=True
                 )
             elif category == 'Weak':
                 st.markdown(
                     '<div class="prediction-weak">'
-                    'WEAK<br>Moderate Bacterial Inactivation'
-                    '</div>',
+                    'WEAK<br>'
+                    '<span style="font-size:1rem">'
+                    'Moderate Bacterial Inactivation'
+                    '</span></div>',
                     unsafe_allow_html=True
                 )
             else:
                 st.markdown(
                     '<div class="prediction-negligible">'
-                    'NEGLIGIBLE<br>Minimal Bacterial Inactivation'
-                    '</div>',
+                    'NEGLIGIBLE<br>'
+                    '<span style="font-size:1rem">'
+                    'Minimal Bacterial Inactivation'
+                    '</span></div>',
                     unsafe_allow_html=True
                 )
 
@@ -473,7 +538,9 @@ elif page == "Predict":
 # ============================================
 elif page == "Model Performance":
     st.header("Model Performance")
-    st.caption(f"Results based on dataset extended from {REFERENCE}")
+    st.caption(
+        f"Results based on dataset extended from {REFERENCE}"
+    )
     st.divider()
 
     tab1, tab2 = st.tabs(["Classification", "Regression"])
@@ -503,11 +570,7 @@ elif page == "Model Performance":
             color_continuous_scale='Blues',
             title='Classification Models Performance'
         )
-        fig.update_layout(
-            height=400,
-            plot_bgcolor='white',
-            paper_bgcolor='white'
-        )
+        fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
@@ -534,11 +597,7 @@ elif page == "Model Performance":
             color_continuous_scale='RdYlGn',
             title='Regression Models Performance'
         )
-        fig2.update_layout(
-            height=400,
-            plot_bgcolor='white',
-            paper_bgcolor='white'
-        )
+        fig2.update_layout(height=400)
         st.plotly_chart(fig2, use_container_width=True)
 
 # ============================================
@@ -608,7 +667,7 @@ elif page == "About":
 # ============================================
 st.divider()
 st.markdown(
-    "<center style='color: #5B8DB8; font-size: 0.9rem;'>"
+    "<center style='font-size: 0.9rem;'>"
     "Digital Twin of Plasma Medicine | "
     "No-Code ML Framework | 2025 | "
     f"Extending {REFERENCE}"
