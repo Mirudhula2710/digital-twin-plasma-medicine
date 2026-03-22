@@ -9,61 +9,103 @@ warnings.filterwarnings('ignore')
 
 st.set_page_config(
     page_title="Digital Twin of Plasma Medicine",
-    page_icon="lightning",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 st.markdown("""
 <style>
+    .stApp {
+        background-color: #F0F4F8;
+    }
     .main-header {
-        font-size: 2.5rem;
-        font-weight: bold;
+        font-size: 2.8rem;
+        font-weight: 800;
         color: #1F4E79;
         text-align: center;
-        padding: 20px;
+        padding: 25px 0 5px 0;
+        letter-spacing: 1px;
     }
     .sub-header {
-        font-size: 1.2rem;
-        color: #2E75B6;
+        font-size: 1.1rem;
+        color: #5B8DB8;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 10px;
+        font-style: italic;
     }
     .prediction-complete {
-        background-color: #C6EFCE;
-        padding: 20px;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #1a7a4a, #2ECC71);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
+        box-shadow: 0 4px 15px rgba(46,204,113,0.3);
     }
     .prediction-strong {
-        background-color: #FFEB9C;
-        padding: 20px;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #b8860b, #F4D03F);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
+        box-shadow: 0 4px 15px rgba(244,208,63,0.3);
     }
     .prediction-weak {
-        background-color: #FFCC99;
-        padding: 20px;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #c0392b, #E74C3C);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
+        box-shadow: 0 4px 15px rgba(231,76,60,0.3);
     }
     .prediction-negligible {
-        background-color: #FFC7CE;
-        padding: 20px;
-        border-radius: 10px;
+        background: linear-gradient(135deg, #6c3483, #9B59B6);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
+        box-shadow: 0 4px 15px rgba(155,89,182,0.3);
     }
+    div[data-testid="metric-container"] {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-left: 4px solid #1F4E79;
+    }
+    .stButton > button {
+        background: linear-gradient(135deg, #1F4E79, #2E75B6);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 15px;
+        transition: all 0.3s;
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #2E75B6, #1F4E79);
+        box-shadow: 0 4px 15px rgba(31,78,121,0.4);
+    }
+    h2, h3 {
+        color: #1F4E79;
+    }
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
+# ============================================
+# Load Models
+# ============================================
 @st.cache_resource
 def load_models():
     with open('best_classifier.pkl', 'rb') as f:
@@ -81,76 +123,149 @@ def load_models():
 classifier, regressor, scaler, feature_names, label_map = load_models()
 reverse_label_map = {v: k for k, v in label_map.items()}
 
+REFERENCE = "Ozdemir et al. (2023)"
+
+# ============================================
+# Header
+# ============================================
 st.markdown(
     '<div class="main-header">Digital Twin of Plasma Medicine</div>',
     unsafe_allow_html=True
 )
 st.markdown(
-    '<div class="sub-header">A No-Code Machine Learning Framework for '
+    '<div class="sub-header">No-Code Machine Learning Framework for '
     'Predicting Cold Atmospheric Plasma Efficacy</div>',
     unsafe_allow_html=True
 )
 st.divider()
 
-st.sidebar.title("Navigation")
+# ============================================
+# Sidebar
+# ============================================
+st.sidebar.markdown("## Navigation")
 page = st.sidebar.radio(
-    "Go to:",
-    ["Home",
-     "Predict Antimicrobial Activity",
-     "Model Performance",
-     "About"]
+    "",
+    ["Home", "Predict", "Model Performance", "About"]
+)
+st.sidebar.divider()
+st.sidebar.markdown("### Reference Study")
+st.sidebar.info(
+    "This work extends:\n\n"
+    "**Ozdemir et al. (2023)**\n\n"
+    "Machine Learning: Science and Technology, 4, 015030\n\n"
+    "DOI: 10.1088/2632-2153/acc1c0"
 )
 
+# ============================================
+# PAGE 1: Home
+# ============================================
 if page == "Home":
-    col1, col2, col3 = st.columns(3)
+
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Articles Used", "45", "+12 vs PDF")
+        st.metric(
+            "Research Articles",
+            "45",
+            f"Extended from {REFERENCE}"
+        )
     with col2:
-        st.metric("Classification Accuracy", "83.33%", "+0.65% vs PDF")
+        st.metric(
+            "Observations",
+            "146",
+            f"Dataset: {REFERENCE}"
+        )
     with col3:
-        st.metric("Regression R2", "0.4824", "146 observations")
+        st.metric(
+            "Classification Accuracy",
+            "83.33%",
+            f"KNN Model"
+        )
+    with col4:
+        st.metric(
+            "Regression R2",
+            "0.48",
+            f"RFR Model"
+        )
 
     st.divider()
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("What This Tool Does")
+        st.subheader("About This Tool")
         st.write("""
         This Digital Twin framework uses Machine Learning to predict
         the antimicrobial activity of Cold Atmospheric
-        Plasma-Activated Liquids (PALs) without any lab experiments.
-        Simply enter your plasma parameters and get instant predictions!
+        Plasma-Activated Liquids (PALs) without requiring
+        laboratory experiments.
+
+        Simply enter your plasma treatment parameters and receive
+        instant predictions of microbial inactivation efficacy.
+
+        This work extends the foundational study by
+        Ozdemir et al. (2023) by introducing an interactive
+        no-code dashboard accessible to all researchers.
         """)
 
-        st.subheader("Models Used")
+        st.subheader("ML Models")
         model_data = {
             'Task': ['Classification', 'Regression'],
-            'Model': ['K-Nearest Neighbors (KNN)', 'Random Forest (RFR)'],
-            'Performance': ['83.33% Accuracy', 'R2 = 0.4824']
+            'Model': [
+                'K-Nearest Neighbors (KNN)',
+                'Random Forest Regressor (RFR)'
+            ],
+            'Performance': ['83.33% Accuracy', 'R2 = 0.48'],
+            'Reference': [REFERENCE, REFERENCE]
         }
-        st.dataframe(pd.DataFrame(model_data), hide_index=True)
+        st.dataframe(
+            pd.DataFrame(model_data),
+            hide_index=True,
+            use_container_width=True
+        )
 
     with col2:
-        st.subheader("MI Category Scale")
+        st.subheader("Microbial Inactivation Scale")
         categories = {
             'Category': ['Complete', 'Strong', 'Weak', 'Negligible'],
-            'MI Range': ['6.0+ log', '3.0-5.99 log',
-                         '1.0-2.99 log', '< 1.0 log'],
-            'Meaning': ['Full inactivation', 'High inactivation',
-                        'Moderate inactivation', 'Minimal inactivation']
+            'MI Range': [
+                'MI >= 6.0 log',
+                'MI 3.0 - 5.99 log',
+                'MI 1.0 - 2.99 log',
+                'MI < 1.0 log'
+            ],
+            'Interpretation': [
+                'Full bacterial inactivation',
+                'High bacterial inactivation',
+                'Moderate bacterial inactivation',
+                'Minimal bacterial inactivation'
+            ]
         }
-        st.dataframe(pd.DataFrame(categories), hide_index=True)
+        st.dataframe(
+            pd.DataFrame(categories),
+            hide_index=True,
+            use_container_width=True
+        )
 
         st.subheader("Supported Microorganisms")
-        microbes = ['E. coli', 'S. aureus', 'P. aeruginosa',
-                    'L. monocytogenes', 'S. typhimurium',
-                    'E. faecalis', 'C. albicans']
-        for m in microbes:
-            st.write(f"- {m}")
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.write("- E. coli")
+            st.write("- S. aureus")
+            st.write("- P. aeruginosa")
+            st.write("- L. monocytogenes")
+        with col_b:
+            st.write("- S. typhimurium")
+            st.write("- E. faecalis")
+            st.write("- C. albicans")
 
-elif page == "Predict Antimicrobial Activity":
+# ============================================
+# PAGE 2: Predict
+# ============================================
+elif page == "Predict":
     st.header("Predict Antimicrobial Activity")
-    st.write("Enter your plasma parameters below and click Predict!")
+    st.write(
+        "Fill in the parameters below and click "
+        "Predict to get your results."
+    )
     st.divider()
 
     col1, col2, col3 = st.columns(3)
@@ -217,9 +332,11 @@ elif page == "Predict Antimicrobial Activity":
 
     st.divider()
 
-    if st.button("PREDICT ANTIMICROBIAL ACTIVITY",
-                 type="primary", use_container_width=True):
-
+    if st.button(
+        "PREDICT ANTIMICROBIAL ACTIVITY",
+        type="primary",
+        use_container_width=True
+    ):
         input_data = pd.DataFrame([{
             'Plasma_Treatment_Type': plasma_type,
             'Gas_Type': gas_type,
@@ -240,12 +357,10 @@ elif page == "Predict Antimicrobial Activity":
                     'Incubation_Temperature_C', 'Post_Storage_Time_min']
 
         input_encoded = pd.get_dummies(input_data, columns=cat_cols)
-
         for col in feature_names:
             if col not in input_encoded.columns:
                 input_encoded[col] = 0
         input_encoded = input_encoded[feature_names]
-
         input_encoded[num_cols] = scaler.transform(
             input_encoded[num_cols]
         )
@@ -264,51 +379,59 @@ elif page == "Predict Antimicrobial Activity":
             if category == 'Complete':
                 st.markdown(
                     '<div class="prediction-complete">'
-                    'Complete - Full Inactivation</div>',
+                    'COMPLETE<br>Full Bacterial Inactivation'
+                    '</div>',
                     unsafe_allow_html=True
                 )
             elif category == 'Strong':
                 st.markdown(
                     '<div class="prediction-strong">'
-                    'Strong - High Inactivation</div>',
+                    'STRONG<br>High Bacterial Inactivation'
+                    '</div>',
                     unsafe_allow_html=True
                 )
             elif category == 'Weak':
                 st.markdown(
                     '<div class="prediction-weak">'
-                    'Weak - Moderate Inactivation</div>',
+                    'WEAK<br>Moderate Bacterial Inactivation'
+                    '</div>',
                     unsafe_allow_html=True
                 )
             else:
                 st.markdown(
                     '<div class="prediction-negligible">'
-                    'Negligible - Minimal Inactivation</div>',
+                    'NEGLIGIBLE<br>Minimal Bacterial Inactivation'
+                    '</div>',
                     unsafe_allow_html=True
                 )
 
         with col2:
-            st.subheader("Regression Result")
+            st.subheader("Predicted MI Value")
             st.metric(
-                "Predicted MI Value",
-                f"{reg_pred:.2f} log",
-                f"Category: {category}"
+                "Microbial Inactivation",
+                f"{reg_pred:.2f} log reduction"
             )
             fig = go.Figure(go.Indicator(
                 mode="gauge+number",
                 value=float(reg_pred),
-                title={'text': "MI Value (log)"},
+                title={'text': "MI Value (log reduction)"},
                 gauge={
                     'axis': {'range': [0, 9]},
                     'bar': {'color': "#1F4E79"},
                     'steps': [
-                        {'range': [0, 1], 'color': '#FFC7CE'},
-                        {'range': [1, 3], 'color': '#FFCC99'},
-                        {'range': [3, 6], 'color': '#FFEB9C'},
-                        {'range': [6, 9], 'color': '#C6EFCE'}
-                    ]
+                        {'range': [0, 1], 'color': '#EBD5F5'},
+                        {'range': [1, 3], 'color': '#FADBD8'},
+                        {'range': [3, 6], 'color': '#FCF3CF'},
+                        {'range': [6, 9], 'color': '#D5F5E3'}
+                    ],
+                    'threshold': {
+                        'line': {'color': "red", 'width': 4},
+                        'thickness': 0.75,
+                        'value': reg_pred
+                    }
                 }
             ))
-            fig.update_layout(height=250)
+            fig.update_layout(height=280)
             st.plotly_chart(fig, use_container_width=True)
 
         with col3:
@@ -323,10 +446,10 @@ elif page == "Predict Antimicrobial Activity":
                 ],
                 'Value': [
                     plasma_type, gas_type,
-                    f"{treatment_time}s", liquid_type,
-                    f"{treatment_volume}mL", microbial_strain,
+                    f"{treatment_time} s", liquid_type,
+                    f"{treatment_volume} mL", microbial_strain,
                     f"{initial_load} log", f"{contact_time} min",
-                    f"{incubation_temp}C", f"{post_storage} min"
+                    f"{incubation_temp} C", f"{post_storage} min"
                 ]
             }
             st.dataframe(
@@ -335,67 +458,84 @@ elif page == "Predict Antimicrobial Activity":
                 use_container_width=True
             )
 
+# ============================================
+# PAGE 3: Model Performance
+# ============================================
 elif page == "Model Performance":
-    st.header("Model Performance Dashboard")
+    st.header("Model Performance")
+    st.caption(f"Results based on dataset extended from {REFERENCE}")
+    st.divider()
 
     tab1, tab2 = st.tabs(["Classification", "Regression"])
 
     with tab1:
         col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Accuracy", "83.33%", "+0.65% vs PDF")
-        col2.metric("F1 Score", "0.8269")
-        col3.metric("Recall", "0.8375")
-        col4.metric("AUC", "0.9292")
+        col1.metric("Accuracy", "83.33%", "KNN Model")
+        col2.metric("F1 Score", "0.8269", "KNN Model")
+        col3.metric("Recall", "0.8375", "KNN Model")
+        col4.metric("AUC", "0.9292", "KNN Model")
 
-        st.subheader("All Classifiers Comparison")
+        st.divider()
+        st.subheader("All Classifiers - Test Accuracy")
         clf_data = pd.DataFrame({
-            'Model': ['KNN','LDA','DTC','LR','ETC','SVM',
-                      'GPC','RFC','ABC','BC','GBC','XGBC',
-                      'BNB','GNB'],
-            'Test Accuracy': [0.8333, 0.8000, 0.8000,
-                               0.7667, 0.7667, 0.7667,
-                               0.7333, 0.7333, 0.7333,
-                               0.7333, 0.7333, 0.7333,
-                               0.6667, 0.4333]
+            'Model': ['KNN', 'LDA', 'DTC', 'LR', 'ETC',
+                      'SVM', 'GPC', 'RFC', 'ABC', 'BC',
+                      'GBC', 'XGBC', 'BNB', 'GNB'],
+            'Test Accuracy': [
+                0.8333, 0.8000, 0.8000, 0.7667, 0.7667,
+                0.7667, 0.7333, 0.7333, 0.7333, 0.7333,
+                0.7333, 0.7333, 0.6667, 0.4333
+            ]
         })
         fig = px.bar(
             clf_data, x='Model', y='Test Accuracy',
             color='Test Accuracy',
             color_continuous_scale='Blues',
-            title='Classification Models - Test Accuracy'
+            title='Classification Models Performance'
         )
-        fig.update_layout(height=400)
+        fig.update_layout(
+            height=400,
+            plot_bgcolor='white',
+            paper_bgcolor='white'
+        )
         st.plotly_chart(fig, use_container_width=True)
 
     with tab2:
         col1, col2, col3 = st.columns(3)
-        col1.metric("R2 Score", "0.4824")
-        col2.metric("MAE", "0.9766")
-        col3.metric("RMSE", "1.2976")
+        col1.metric("R2 Score", "0.4824", "RFR Model")
+        col2.metric("MAE", "0.9766", "RFR Model")
+        col3.metric("RMSE", "1.2976", "RFR Model")
 
-        st.subheader("All Regressors Comparison")
+        st.divider()
+        st.subheader("All Regressors - R2 Score")
         reg_data = pd.DataFrame({
-            'Model': ['ABR','RFR','XGBR','BaR','GBR',
-                      'ETR','LSVR','MLPR','RR','BR',
-                      'KNR','ENR','LLars','LASSO'],
-            'R2 Score': [0.5818, 0.5815, 0.5558,
-                          0.5493, 0.5316, 0.5007,
-                          0.4919, 0.4673, 0.4557,
-                          0.4461, 0.3623, -0.0602,
-                          -0.0756, -0.0756]
+            'Model': ['ABR', 'RFR', 'XGBR', 'BaR', 'GBR',
+                      'ETR', 'LSVR', 'MLPR', 'RR', 'BR',
+                      'KNR', 'ENR', 'LLars', 'LASSO'],
+            'R2 Score': [
+                0.5818, 0.5815, 0.5558, 0.5493, 0.5316,
+                0.5007, 0.4919, 0.4673, 0.4557, 0.4461,
+                0.3623, -0.0602, -0.0756, -0.0756
+            ]
         })
         fig2 = px.bar(
             reg_data, x='Model', y='R2 Score',
             color='R2 Score',
             color_continuous_scale='RdYlGn',
-            title='Regression Models - R2 Score'
+            title='Regression Models Performance'
         )
-        fig2.update_layout(height=400)
+        fig2.update_layout(
+            height=400,
+            plot_bgcolor='white',
+            paper_bgcolor='white'
+        )
         st.plotly_chart(fig2, use_container_width=True)
 
+# ============================================
+# PAGE 4: About
+# ============================================
 elif page == "About":
     st.header("About This Project")
-
     col1, col2 = st.columns(2)
 
     with col1:
@@ -406,45 +546,62 @@ elif page == "About":
             "Plasma Efficacy"
         )
 
-        st.subheader("Dataset")
+        st.subheader("Dataset Summary")
         st.write("""
-        - 45 published articles (2008-2025)
-        - 146 observations after cleaning
+        - 45 published research articles (2008 - 2025)
+        - 146 experimental observations
         - 10 input features
-        - 4 MI categories: Negligible, Weak, Strong, Complete
+        - 4 output categories: Negligible, Weak, Strong, Complete
         """)
 
-        st.subheader("Based On")
+        st.subheader("Reference Study")
         st.write("""
-        Ozdemir et al. (2023) - Machine learning to predict the
-        antimicrobial activity of cold atmospheric plasma-activated
-        liquids. Machine Learning: Science and Technology, 4, 015030
+        Ozdemir et al. (2023)
+        Machine learning to predict the antimicrobial activity
+        of cold atmospheric plasma-activated liquids.
+        Machine Learning: Science and Technology, 4, 015030.
+        DOI: 10.1088/2632-2153/acc1c0
         """)
 
     with col2:
-        st.subheader("Novel Contributions")
+        st.subheader("Key Contributions")
         st.write("""
-        1. First No-Code Dashboard for PAL prediction
-        2. Extended Dataset (45 vs 33 articles)
-        3. Better Accuracy (83.33% vs 82.68%)
-        4. New MI Category (Negligible added)
+        1. First interactive no-code dashboard for PAL prediction
+        2. Extended literature dataset (2008 - 2025)
+        3. New Negligible MI category introduced
+        4. Real-time prediction without lab experiments
         5. Interactive Digital Twin interface
-        6. Real-time predictions for researchers
+        6. Accessible to non-coding researchers
         """)
 
         st.subheader("Technology Stack")
         tech = {
             'Tool': ['Python', 'Scikit-learn', 'Streamlit',
                      'Pandas', 'Plotly', 'GitHub'],
-            'Purpose': ['Programming', 'ML Models', 'Dashboard',
-                        'Data Processing', 'Visualizations',
-                        'Deployment']
+            'Purpose': [
+                'Core Programming',
+                'Machine Learning Models',
+                'Web Dashboard',
+                'Data Processing',
+                'Interactive Visualizations',
+                'Deployment'
+            ]
         }
-        st.dataframe(pd.DataFrame(tech), hide_index=True)
+        st.dataframe(
+            pd.DataFrame(tech),
+            hide_index=True,
+            use_container_width=True
+        )
 
+# ============================================
+# Footer
+# ============================================
 st.divider()
 st.markdown(
-    "<center>Digital Twin of Plasma Medicine | "
-    "Built with Streamlit</center>",
+    "<center style='color: #5B8DB8; font-size: 0.9rem;'>"
+    "Digital Twin of Plasma Medicine | "
+    "No-Code ML Framework | 2025 | "
+    f"Extending {REFERENCE}"
+    "</center>",
     unsafe_allow_html=True
 )
